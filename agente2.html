@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CollabStudio · AI Prospecting Agent</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#06090f;--card:#0c1118;--line:#1a2530;--line2:#1e2e3a;
+  --gold:#c9993a;--goldL:#e8bb6a;--goldDim:rgba(201,153,58,.1);
+  --text:#cdd9e5;--muted:#6a8090;--faint:#2a3a46;
+  --green:#1db954;--amber:#f0a030;--red:#e05050;--blue:#4da6d0;--teal:#2ac3a2;
+}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+select,input,textarea,button{font-family:'DM Sans',sans-serif}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--line2);border-radius:3px}
+.header{background:var(--card);border-bottom:1px solid var(--line);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;position:sticky;top:0;z-index:100}
+.logo-c{font-family:'Bebas Neue',cursive;font-size:28px;color:var(--gold);letter-spacing:.1em}
+.logo-w{font-family:'Bebas Neue',cursive;font-size:28px;color:var(--text);letter-spacing:.1em}
+.logo-sub{font-size:10px;color:var(--muted);letter-spacing:.14em;margin-top:-4px}
+.stats{display:flex;gap:10px;flex-wrap:wrap}
+.stat{background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:8px 18px;text-align:center;min-width:72px}
+.stat-val{font-size:22px;font-weight:700}
+.stat-lbl{font-size:10px;color:var(--muted);margin-top:1px}
+.main{max-width:960px;margin:0 auto;padding:28px}
+.panel{background:var(--card);border:1px solid var(--line2);border-radius:16px;padding:24px;margin-bottom:22px}
+.panel-title{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:18px}
+.config-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
+.field label{display:block;font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.field select{width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:8px;color:var(--text);padding:9px 12px;font-size:13px;cursor:pointer;outline:none}
+.config-footer{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.from-lbl{font-size:12px;color:var(--muted)}
+.from-lbl span{color:var(--teal);font-weight:600}
+.btn{border:none;border-radius:8px;padding:9px 20px;font-weight:700;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:opacity .2s}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--goldL));color:#06090f}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--line2)}
+.btn-green{background:rgba(29,185,84,.15);color:var(--green);border:1px solid rgba(29,185,84,.3)}
+.btn-red{background:rgba(224,80,80,.15);color:var(--red);border:1px solid rgba(224,80,80,.3)}
+.btn-teal{background:rgba(42,195,162,.15);color:var(--teal);border:1px solid rgba(42,195,162,.3)}
+.btn-sm{padding:5px 12px;font-size:12px}
+.progress-wrap{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-bottom:20px}
+.progress-head{display:flex;justify-content:space-between;margin-bottom:10px}
+.progress-msg{font-size:13px;font-weight:600}
+.progress-pct{font-size:12px;color:var(--gold);font-family:monospace}
+.progress-track{background:var(--bg);border-radius:4px;height:4px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--goldL));border-radius:4px;transition:width .5s ease}
+.alert{border-radius:10px;padding:12px 18px;margin-bottom:18px;font-size:13px}
+.alert-err{background:rgba(224,80,80,.1);border:1px solid rgba(224,80,80,.4);color:var(--red)}
+.alert-ok{background:rgba(29,185,84,.1);border:1px solid rgba(29,185,84,.4);color:var(--green)}
+.log-wrap{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:20px;max-height:180px;overflow-y:auto}
+.log-title{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
+.log-row{display:flex;gap:10px;font-size:12px;margin-bottom:4px}
+.log-ts{color:var(--faint);font-family:monospace;flex-shrink:0}
+.log-ok{color:var(--green)}.log-err{color:var(--red)}.log-info{color:var(--muted)}
+.tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.tab{background:transparent;border:1px solid var(--line);border-radius:20px;padding:5px 16px;font-size:12px;color:var(--muted);font-weight:600;cursor:pointer;transition:all .2s}
+.tab.active{background:rgba(201,153,58,.15);color:var(--gold);border-color:rgba(201,153,58,.4)}
+.pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.lead-card{border-radius:14px;margin-bottom:16px;overflow:hidden;border:1px solid var(--line);transition:border-color .3s}
+.lead-card.approved{border-color:rgba(29,185,84,.4)}
+.lead-card.rejected{border-color:rgba(224,80,80,.2);opacity:.4}
+.lead-card.error-card{border-color:rgba(224,80,80,.4)}
+.lead-head{background:var(--card);padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;flex-wrap:wrap}
+.lead-icon{width:44px;height:44px;border-radius:11px;background:var(--goldDim);border:1px solid rgba(201,153,58,.3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.lead-name{font-family:'Bebas Neue',cursive;font-size:18px;letter-spacing:.05em;line-height:1}
+.lead-sub{color:var(--muted);font-size:12px;margin-top:3px}
+.lead-badges{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto}
+.lead-body{background:var(--card);border-top:1px solid var(--line);padding:16px 20px;display:none}
+.lead-body.open{display:block}
+.hook-box{background:var(--goldDim);border:1px solid rgba(201,153,58,.25);border-radius:10px;padding:12px 16px;margin-bottom:16px}
+.hook-lbl{font-size:10px;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.hook-txt{color:var(--text);font-size:13px;line-height:1.6}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.col-lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.reason{font-size:13px;color:var(--text);margin-bottom:5px;display:flex;gap:8px}
+.contact-box{background:var(--bg);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.contact-name{color:var(--goldL);font-weight:700;font-size:15px}
+.action-row{display:flex;gap:10px;flex-wrap:wrap}
+.empty{text-align:center;padding:80px 20px;border:1px dashed var(--line2);border-radius:16px}
+.empty-icon{font-size:52px;margin-bottom:16px}
+.empty-title{font-family:'Bebas Neue',cursive;font-size:28px;color:var(--gold);letter-spacing:.06em}
+.empty-sub{color:var(--muted);font-size:14px;margin-top:8px;max-width:420px;margin-left:auto;margin-right:auto;line-height:1.6}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:999;padding:24px;backdrop-filter:blur(6px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--line2);border-radius:18px;width:100%;max-width:660px;max-height:92vh;overflow-y:auto;box-shadow:0 0 80px rgba(201,153,58,.1)}
+.modal-hd{padding:20px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start}
+.modal-title{font-family:'Bebas Neue',cursive;font-size:22px;color:var(--gold);letter-spacing:.07em}
+.modal-sub{color:var(--muted);font-size:12px;margin-top:2px}
+.modal-x{background:none;border:none;color:var(--muted);font-size:26px;line-height:1;padding:0;cursor:pointer}
+.modal-bd{padding:24px}
+.f-lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.m-input{width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:8px;color:var(--text);padding:9px 12px;font-size:13px;margin-bottom:14px;outline:none}
+.m-textarea{width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:8px;color:var(--text);padding:10px 12px;font-size:13px;line-height:1.7;resize:vertical;margin-bottom:18px;outline:none}
+.modal-foot{font-size:11px;color:var(--muted);margin-top:12px}
+.linkedin-row{background:rgba(77,166,208,.08);border:1px solid rgba(77,166,208,.25);border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.linkedin-lbl{font-size:10px;color:var(--blue);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
+.apikey-banner{background:rgba(42,195,162,.08);border:1px solid rgba(42,195,162,.3);border-radius:12px;padding:16px 20px;margin-bottom:22px}
+.apikey-banner h3{color:var(--teal);font-size:14px;font-weight:700;margin-bottom:8px}
+.apikey-banner p{color:var(--muted);font-size:13px;line-height:1.6;margin-bottom:12px}
+.apikey-row{display:flex;gap:10px;align-items:center}
+.apikey-input{flex:1;background:var(--bg);border:1px solid var(--line2);border-radius:8px;color:var(--text);padding:9px 12px;font-size:13px;font-family:monospace;outline:none}
+@media(max-width:640px){.config-grid{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}.header{padding:14px 16px}.main{padding:16px}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div><span class="logo-c">COLLAB</span><span class="logo-w">STUDIO</span></div>
+    <div class="logo-sub">AI PROSPECTING AGENT · GMAIL INTEGRATION</div>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="stat-val" id="s-total" style="color:var(--text)">0</div><div class="stat-lbl">Total</div></div>
+    <div class="stat"><div class="stat-val" id="s-hot" style="color:var(--green)">0</div><div class="stat-lbl">🔥 Hot</div></div>
+    <div class="stat"><div class="stat-val" id="s-pending" style="color:var(--amber)">0</div><div class="stat-lbl">Revisar</div></div>
+    <div class="stat"><div class="stat-val" id="s-sent" style="color:var(--teal)">0</div><div class="stat-lbl">Enviados</div></div>
+    <div class="stat"><div class="stat-val" id="s-approved" style="color:var(--gold)">0</div><div class="stat-lbl">Aprobados</div></div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="apikey-banner" id="apikey-banner">
+    <h3>🔑 Configura tu API Key de Anthropic</h3>
+    <p>El agente necesita tu API key para funcionar. Se guarda solo en tu browser, nunca sale de tu computador.<br>Consíguela en <a href="https://console.anthropic.com/keys" target="_blank">console.anthropic.com/keys</a></p>
+    <div class="apikey-row">
+      <input type="password" class="apikey-input" id="apikey-input" placeholder="sk-ant-api03-..."/>
+      <button class="btn btn-teal" id="save-key-btn">Guardar</button>
+      <span id="key-saved" style="display:none;font-size:12px;color:var(--green)">✓ Guardada</span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">⚡ Configurar misión de prospección</div>
+    <div class="config-grid">
+      <div class="field"><label>Industria</label>
+        <select id="sel-industry">
+          <option>CPG / FMCG</option><option>Alimentos &amp; Bebidas</option>
+          <option>Cuidado Personal &amp; Belleza</option><option>Tecnología de Consumo</option>
+          <option>Moda &amp; Retail</option><option>Pharma &amp; Salud</option><option>Automotriz</option>
+        </select>
+      </div>
+      <div class="field"><label>Mercado objetivo</label>
+        <select id="sel-region">
+          <option>Colombia</option><option>México</option><option>Argentina</option>
+          <option>Chile</option><option>Perú</option><option>LATAM Global</option>
+        </select>
+      </div>
+      <div class="field"><label>Presupuesto objetivo</label>
+        <select id="sel-budget">
+          <option>$10K-$50K USD/mes</option><option>$50K-$150K USD/mes</option><option>$150K+ USD/mes</option>
+        </select>
+      </div>
+    </div>
+    <div class="config-footer">
+      <button class="btn btn-gold" id="launch-btn">⚡ Lanzar agente</button>
+      <div class="from-lbl">Enviando desde <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5831363e37183b373434393a2b2c2d3c3137392b763b3735">[email&#160;protected]</a></span></div>
+    </div>
+  </div>
+
+  <div id="alert-err" class="alert alert-err" style="display:none"></div>
+  <div id="alert-ok"  class="alert alert-ok"  style="display:none"></div>
+
+  <div class="progress-wrap" id="progress-wrap" style="display:none">
+    <div class="progress-head">
+      <span class="progress-msg" id="progress-msg">Iniciando...</span>
+      <span class="progress-pct" id="progress-pct">0%</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  </div>
+
+  <div class="log-wrap" id="log-wrap" style="display:none">
+    <div class="log-title">🪵 Log de actividad</div>
+    <div id="log-rows"></div>
+  </div>
+
+  <div class="tabs" id="tabs-wrap" style="display:none">
+    <button class="tab active" data-tab="all">Todos (<span id="tc-all">0</span>)</button>
+    <button class="tab" data-tab="hot">🔥 Hot (<span id="tc-hot">0</span>)</button>
+    <button class="tab" data-tab="ready">Por revisar (<span id="tc-ready">0</span>)</button>
+    <button class="tab" data-tab="sent">✉️ Enviados (<span id="tc-sent">0</span>)</button>
+    <button class="tab" data-tab="approved">Aprobados (<span id="tc-approved">0</span>)</button>
+    <button class="tab" data-tab="rejected">Descartados</button>
+  </div>
+
+  <div id="leads-wrap"></div>
+
+  <div class="empty" id="empty-state">
+    <div class="empty-icon">🤖</div>
+    <div class="empty-title">Agente listo para prospectar</div>
+    <div class="empty-sub">Guarda tu API key, configura industria y mercado, y lanza el agente. Busca empresas, califica el fit, encuentra el contacto y redacta el email — tú apruebas y envías.</div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="email-modal">
+  <div class="modal">
+    <div class="modal-hd">
+      <div>
+        <div class="modal-title">Revisar &amp; Enviar Email</div>
+        <div class="modal-sub" id="modal-sub">Para: —</div>
+      </div>
+      <button class="modal-x" id="modal-close-btn">×</button>
+    </div>
+    <div class="modal-bd">
+      <div id="linkedin-row" class="linkedin-row" style="display:none">
+        <div>
+          <div class="linkedin-lbl">💼 LinkedIn del contacto</div>
+          <div id="linkedin-info" style="font-size:13px;color:var(--text)"></div>
+        </div>
+        <a id="linkedin-link" href="#" target="_blank" class="btn btn-ghost btn-sm">Ver perfil →</a>
+      </div>
+      <div class="f-lbl">Para (email corporativo)</div>
+      <input type="email" class="m-input" id="modal-to" placeholder="contacto@empresa.com"/>
+      <div class="f-lbl">Asunto</div>
+      <input type="text" class="m-input" id="modal-subject"/>
+      <div class="f-lbl">Cuerpo</div>
+      <textarea class="m-textarea" id="modal-body" rows="11"></textarea>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-gold" id="send-btn">📤 Enviar por Gmail</button>
+        <button class="btn btn-ghost" id="modal-cancel-btn">Cancelar</button>
+      </div>
+      <div class="modal-foot">✉️ Se enviará desde <strong style="color:var(--teal)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f59c9b939ab5969a99999497868180919c9a9486db969a98">[email&#160;protected]</a></strong> vía Gmail</div>
+    </div>
+  </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+var API_KEY = localStorage.getItem('cs_apikey') || '';
+var leads = [];
+var currentTab = 'all';
+var emailLeadId = null;
+var running = false;
+
+var sleep = function(ms){ return new Promise(function(r){ setTimeout(r,ms); }); };
+
+function ts(){
+  return new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+function addLog(type, text){
+  var wrap = document.getElementById('log-wrap');
+  var rows = document.getElementById('log-rows');
+  wrap.style.display = 'block';
+  var cls = type==='error'?'log-err':type==='ok'?'log-ok':'log-info';
+  var icon = type==='error'?'⚠️':type==='ok'?'✓':'·';
+  var div = document.createElement('div');
+  div.className = 'log-row';
+  div.innerHTML = '<span class="log-ts">'+ts()+'</span><span class="'+cls+'">'+icon+' '+text+'</span>';
+  rows.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function setProgress(pct, msg){
+  document.getElementById('progress-wrap').style.display = 'block';
+  document.getElementById('progress-msg').textContent = msg;
+  document.getElementById('progress-pct').textContent = pct+'%';
+  document.getElementById('progress-fill').style.width = pct+'%';
+}
+
+function showErr(msg){
+  var el = document.getElementById('alert-err');
+  el.style.display='block';
+  el.innerHTML='⚠️ <strong>Error:</strong> '+msg;
+}
+
+function showOk(msg){
+  var el = document.getElementById('alert-ok');
+  el.style.display='block';
+  el.textContent=msg;
+  setTimeout(function(){ el.style.display='none'; },5000);
+}
+
+function hideAlerts(){
+  document.getElementById('alert-err').style.display='none';
+  document.getElementById('alert-ok').style.display='none';
+}
+
+function saveKey(){
+  var val = document.getElementById('apikey-input').value.trim();
+  if(!val){ alert('Pega tu API key primero'); return; }
+  if(!val.startsWith('sk-')){ alert('La API key debe empezar con sk-ant-...'); return; }
+  API_KEY = val;
+  localStorage.setItem('cs_apikey', val);
+  var saved = document.getElementById('key-saved');
+  saved.style.display='inline';
+  setTimeout(function(){ saved.style.display='none'; },3000);
+  var banner = document.getElementById('apikey-banner');
+  banner.style.background='rgba(29,185,84,.06)';
+  banner.style.borderColor='rgba(29,185,84,.3)';
+}
+
+function parseJSON(raw){
+  var m = raw.match(/```json\s*([\s\S]+?)```/i);
+  if(m){ try{ return JSON.parse(m[1].trim()); }catch(e){} }
+  m = raw.match(/```\s*([\s\S]+?)```/i);
+  if(m){ try{ return JSON.parse(m[1].trim()); }catch(e){} }
+  var s = raw.search(/[\[{]/);
+  if(s!==-1){
+    var ch=raw[s];
+    var e=ch==='['?raw.lastIndexOf(']'):raw.lastIndexOf('}');
+    if(e>s){ try{ return JSON.parse(raw.slice(s,e+1)); }catch(pe){ throw new Error('JSON parse: '+pe.message); } }
+  }
+  throw new Error('Sin JSON. Respuesta: '+raw.slice(0,100));
+}
+
+function callClaude(prompt, label){
+  if(!API_KEY) throw new Error('Falta API key');
+  var timeout = new Promise(function(_,rej){
+    setTimeout(function(){ rej(new Error('Timeout 35s: '+(label||''))); },35000);
+  });
+  var call = fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key':API_KEY,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-allow-browser':'true'
+    },
+    body:JSON.stringify({
+      model:'claude-haiku-4-5-20251001',
+      max_tokens:800,
+      messages:[{role:'user',content:prompt}]
+    })
+  }).then(function(res){
+    if(!res.ok) return res.text().then(function(t){ throw new Error('HTTP '+res.status+': '+t.slice(0,100)); });
+    return res.json();
+  }).then(function(data){
+    if(data.error) throw new Error(data.error.message);
+    var raw = (data.content&&data.content[0]&&data.content[0].text)||'';
+    return parseJSON(raw);
+  });
+  return Promise.race([call, timeout]);
+}
+
+async function callWithRetry(prompt, label, retries){
+  retries = retries||2;
+  var lastErr;
+  for(var i=0;i<=retries;i++){
+    try{ return await callClaude(prompt,label+(i>0?' (intento '+(i+1)+')':'')); }
+    catch(e){ lastErr=e; if(i<retries) await sleep(1500*(i+1)); }
+  }
+  throw lastErr;
+}
+
+async function sendViaGmail(to, subject, body){
+  var res = await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'x-api-key':API_KEY,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-allow-browser':'true'
+    },
+    body:JSON.stringify({
+      model:'claude-haiku-4-5-20251001',
+      max_tokens:256,
+      messages:[{role:'user',content:'Send this email via Gmail:\nTo: '+to+'\nSubject: '+subject+'\nBody:\n'+body+'\nReply with: {"sent":true}'}],
+      mcp_servers:[{type:'url',url:'https://gmail.mcp.claude.com/mcp',name:'gmail'}]
+    })
+  });
+  if(!res.ok) throw new Error('Gmail error '+res.status);
+  return {sent:true};
+}
+
+async function runAgent(){
+  var industry = document.getElementById('sel-industry').value;
+  var region   = document.getElementById('sel-region').value;
+  var budget   = document.getElementById('sel-budget').value;
+
+  setProgress(5,'Buscando empresas en '+industry+' &middot; '+region+'...');
+  addLog('info','Buscando empresas en '+industry+' &middot; '+region);
+
+  var companies;
+  try{
+    companies = await callWithRetry(
+      'List 4 real multinationals in "'+industry+'" active in '+region+' that would invest in influencer marketing with local creators. JSON array only:\n[{"name":"","hq":"","colombiaPresence":"","brands":[""],"whyInfluencer":""}]',
+      'buscar empresas'
+    );
+    if(!Array.isArray(companies)||companies.length===0) throw new Error('Respuesta inválida');
+    addLog('ok',companies.length+' empresas: '+companies.map(function(c){return c.name;}).join(', '));
+  }catch(e){
+    addLog('error','Buscar empresas: '+e.message);
+    showErr(e.message);
+    return;
+  }
+
+  for(var i=0;i<companies.length;i++){
+    var co=companies[i];
+    var base=10+i*22;
+    try{
+      setProgress(base,'Calificando '+co.name+'...');
+      addLog('info','Calificando '+co.name);
+      var qual = await callWithRetry(
+        'Qualify for CollabStudio (Colombian influencer agency, creators in Colombia only). ALL fields in Spanish. JSON only:\nCompany:'+co.name+'|Presence:'+co.colombiaPresence+'|Brands:'+(co.brands||[]).join(',')+'|Budget:'+budget+'\n{"score":0,"scoreLabel":"Caliente|Tibio|Frío","scoreReason":"","contact":{"name":"","title":"","email":"","linkedin":"linkedin.com/in/..."},"fitReasons":["","",""],"risks":["",""],"hook":"","recentActivity":""}',
+        'calificar '+co.name
+      );
+
+      setProgress(base+11,'Redactando email para '+co.name+'...');
+      addLog('info','Email para '+co.name);
+      var email = await callWithRetry(
+        'Write cold email in Spanish from Ana María Pardo (CollabStudio, Colombian influencer agency) to '+(qual.contact&&qual.contact.name||'Marketing Director')+' at '+co.name+'.\nContext: brands='+(co.brands||[]).join(',')+'| recent:'+qual.recentActivity+'| hook:'+qual.hook+'\nRules: max 90 words, NO generic phrases, subject references '+co.name+' specifically, open with concrete insight, propose 20min call, peer tone.\nSignature: Ana María Pardo | CollabStudio | info [at] collabstudioas.com\nJSON only:{"subject":"","preview":"","body":""}',
+        'email '+co.name
+      );
+
+      leads.push({id:Date.now()+i,...co,...qual,email:email,status:'ready',sentAt:null});
+      renderAll();
+      setProgress(base+22,co.name+' ✓');
+      addLog('ok',co.name+' listo — score '+(qual.score||'?'));
+    }catch(e){
+      leads.push({id:Date.now()+i,name:co.name||('Empresa '+(i+1)),error:e.message,status:'error',score:0});
+      renderAll();
+      addLog('error',co.name+': '+e.message);
+    }
+    await sleep(300);
+  }
+  setProgress(100,'¡Misión completada! '+leads.length+' leads generados');
+  addLog('ok','Pipeline completo');
+}
+
+function scoreColor(s){ return s>=75?'var(--green)':s>=50?'var(--amber)':'var(--red)'; }
+function scoreLabel(s){ return s>=75?'🔥 Caliente':s>=50?'🟡 Tibio':'❄️ Frío'; }
+
+function pill(text,color){
+  return '<span class="pill" style="background:'+color+'22;color:'+color+';border:1px solid '+color+'44">'+text+'</span>';
+}
+
+function renderAll(){
+  updateStats();
+  renderLeads();
+}
+
+function updateStats(){
+  var tot  = leads.length;
+  var hot  = leads.filter(function(l){return l.score>=75;}).length;
+  var pend = leads.filter(function(l){return l.status==='ready';}).length;
+  var sent = leads.filter(function(l){return !!l.sentAt;}).length;
+  var appr = leads.filter(function(l){return l.status==='approved';}).length;
+  document.getElementById('s-total').textContent=tot;
+  document.getElementById('s-hot').textContent=hot;
+  document.getElementById('s-pending').textContent=pend;
+  document.getElementById('s-sent').textContent=sent;
+  document.getElementById('s-approved').textContent=appr;
+  document.getElementById('tc-all').textContent=tot;
+  document.getElementById('tc-hot').textContent=hot;
+  document.getElementById('tc-ready').textContent=pend;
+  document.getElementById('tc-sent').textContent=sent;
+  document.getElementById('tc-approved').textContent=appr;
+  document.getElementById('tabs-wrap').style.display = tot>0?'flex':'none';
+  document.getElementById('empty-state').style.display = tot>0?'none':'block';
+}
+
+function renderLeads(){
+  var filtered = leads.filter(function(l){
+    if(currentTab==='all') return true;
+    if(currentTab==='hot') return l.score>=75;
+    if(currentTab==='sent') return !!l.sentAt;
+    return l.status===currentTab;
+  });
+  document.getElementById('leads-wrap').innerHTML = filtered.map(function(l){ return cardHtml(l); }).join('');
+  filtered.forEach(function(l){
+    var hd = document.getElementById('hd-'+l.id);
+    if(hd) hd.addEventListener('click',function(){ toggleCard(l.id); });
+    var ab = document.getElementById('approve-'+l.id);
+    if(ab) ab.addEventListener('click',function(e){ e.stopPropagation(); approveLead(l.id); });
+    var rb = document.getElementById('reject-'+l.id);
+    if(rb) rb.addEventListener('click',function(e){ e.stopPropagation(); rejectLead(l.id); });
+    var eb = document.getElementById('email-btn-'+l.id);
+    if(eb) eb.addEventListener('click',function(e){ e.stopPropagation(); openEmailModal(l.id); });
+  });
+}
+
+function cardHtml(l){
+  var isErr = l.status==='error';
+  var cls = l.status==='approved'?'approved':l.status==='rejected'?'rejected':isErr?'error-card':'';
+  var sc = scoreColor(l.score);
+  var statusPill = l.sentAt ? pill('✉️ Enviado','var(--teal)')
+    : l.status==='approved' ? pill('✓ Aprobado','var(--green)')
+    : l.status==='rejected' ? pill('✕ Descartado','var(--red)')
+    : pill('● Por revisar','var(--amber)');
+
+  var head = '<div class="lead-head" id="hd-'+l.id+'">'
+    +'<div class="lead-icon">'+(isErr?'⚠️':'🏢')+'</div>'
+    +'<div style="flex:1;min-width:0">'
+    +'<div class="lead-name" style="color:'+(isErr?'var(--red)':'var(--goldL)')+'">'+l.name+'</div>'
+    +'<div class="lead-sub">'+(isErr?(l.error||'').slice(0,100):((l.contact&&l.contact.title||'')+(l.hq?' &middot; '+l.hq:'')+(l.brands&&l.brands.length?' &middot; '+l.brands.slice(0,2).join(', '):''))+'</div>'
+    +'</div>'
+    +(isErr?''
+      :'<div class="lead-badges">'+pill(scoreLabel(l.score)+' &middot; '+l.score,sc)+' '+statusPill
+      +'<span style="color:var(--faint);font-size:14px" id="chev-'+l.id+'">▼</span></div>')
+    +'</div>';
+
+  if(isErr) return '<div class="lead-card '+cls+'" id="card-'+l.id+'">'+head+'</div>';
+
+  var fitRows=(l.fitReasons||[]).map(function(r){return '<div class="reason"><span style="color:var(--green)">&#x2192;</span>'+r+'</div>';}).join('');
+  var riskRows=(l.risks||[]).map(function(r){return '<div class="reason"><span style="color:var(--amber)">&#x2192;</span>'+r+'</div>';}).join('');
+
+  var actions='';
+  if(l.status==='ready'){
+    actions='<button class="btn btn-gold btn-sm" id="email-btn-'+l.id+'">📧 Revisar &amp; Enviar</button>'
+      +'<button class="btn btn-green btn-sm" id="approve-'+l.id+'">✓ Aprobar</button>'
+      +'<button class="btn btn-red btn-sm" id="reject-'+l.id+'">✕ Descartar</button>';
+  } else if(l.status==='approved'&&!l.sentAt){
+    actions='<button class="btn btn-teal btn-sm" id="email-btn-'+l.id+'">📤 Enviar email</button>';
+  } else if(l.sentAt){
+    actions=pill('✉️ Enviado '+new Date(l.sentAt).toLocaleDateString('es-CO'),'var(--teal)');
+  }
+
+  var body='<div class="lead-body" id="body-'+l.id+'">'
+    +'<div class="hook-box"><div class="hook-lbl">🎯 Ángulo de entrada</div><div class="hook-txt">'+(l.hook||'')+'</div></div>'
+    +'<div class="two-col"><div><div class="col-lbl">✅ Por qué es fit</div>'+fitRows+'</div>'
+    +'<div><div class="col-lbl">⚠️ Riesgos</div>'+riskRows+'</div></div>'
+    +'<div class="contact-box"><div class="col-lbl" style="width:100%">👤 Contacto</div>'
+    +'<span class="contact-name">'+(l.contact&&l.contact.name||'')+'</span>'
+    +'<span class="pill" style="background:var(--faint);color:var(--muted)">'+(l.contact&&l.contact.title||'')+'</span>'
+    +(l.contact&&l.contact.email?'<a href="mailto:'+l.contact.email+'">✉️ '+l.contact.email+'</a>':'')
+    +(l.contact&&l.contact.linkedin?'<a href="https://'+l.contact.linkedin+'" target="_blank">💼 LinkedIn →</a>':'')
+    +'</div>'
+    +'<div class="action-row">'+actions+'</div>'
+    +'</div>';
+
+  return '<div class="lead-card '+cls+'" id="card-'+l.id+'">'+head+body+'</div>';
+}
+
+function toggleCard(id){
+  var body=document.getElementById('body-'+id);
+  var chev=document.getElementById('chev-'+id);
+  if(!body) return;
+  var open=body.classList.toggle('open');
+  if(chev) chev.textContent=open?'▲':'▼';
+}
+
+function setTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.tab').forEach(function(b){ b.classList.toggle('active',b.dataset.tab===tab); });
+  renderLeads();
+}
+
+function approveLead(id){ leads=leads.map(function(l){ return l.id===id?Object.assign({},l,{status:'approved'}):l; }); renderAll(); }
+function rejectLead(id) { leads=leads.map(function(l){ return l.id===id?Object.assign({},l,{status:'rejected'}):l; }); renderAll(); }
+
+function openEmailModal(id){
+  var l=leads.find(function(x){return x.id===id;});
+  if(!l) return;
+  emailLeadId=id;
+  document.getElementById('modal-sub').textContent='Para: '+(l.contact&&l.contact.name||'—')+' &middot; '+l.name;
+  document.getElementById('modal-to').value=(l.contact&&l.contact.email)||'';
+  document.getElementById('modal-subject').value=(l.email&&l.email.subject)||'';
+  document.getElementById('modal-body').value=(l.email&&l.email.body)||'';
+  var lr=document.getElementById('linkedin-row');
+  if(l.contact&&l.contact.linkedin){
+    lr.style.display='flex';
+    document.getElementById('linkedin-info').textContent=(l.contact.name||'')+' &middot; '+(l.contact.title||'');
+    document.getElementById('linkedin-link').href='https://'+l.contact.linkedin;
+  } else { lr.style.display='none'; }
+  document.getElementById('email-modal').classList.add('open');
+}
+
+function closeEmailModal(){
+  document.getElementById('email-modal').classList.remove('open');
+  emailLeadId=null;
+}
+
+async function sendEmail(){
+  var to=document.getElementById('modal-to').value.trim();
+  var subj=document.getElementById('modal-subject').value.trim();
+  var body=document.getElementById('modal-body').value.trim();
+  if(!to){ alert('Agrega el email del destinatario'); return; }
+  var btn=document.getElementById('send-btn');
+  btn.disabled=true; btn.textContent='⟳ Enviando...';
+  try{
+    await sendViaGmail(to,subj,body);
+    leads=leads.map(function(l){ return l.id===emailLeadId?Object.assign({},l,{status:'approved',sentAt:Date.now(),email:{subject:subj,body:body}}):l; });
+    renderAll();
+    showOk('✓ Email enviado a '+to);
+    addLog('ok','Email enviado → '+to);
+    closeEmailModal();
+  }catch(e){
+    showErr('Error Gmail: '+e.message);
+    addLog('error','Gmail: '+e.message);
+  }
+  btn.disabled=false; btn.textContent='📤 Enviar por Gmail';
+}
+
+async function launch(){
+  if(!API_KEY){ alert('Primero guarda tu API key arriba'); return; }
+  if(running) return;
+  running=true;
+  leads=[];
+  hideAlerts();
+  document.getElementById('log-rows').innerHTML='';
+  document.getElementById('log-wrap').style.display='none';
+  document.getElementById('progress-wrap').style.display='block';
+  var btn=document.getElementById('launch-btn');
+  btn.disabled=true; btn.textContent='⟳ Agente trabajando...';
+  renderAll();
+  try{ await runAgent(); }
+  catch(e){ showErr(e.message); addLog('error',e.message); }
+  running=false;
+  btn.disabled=false; btn.textContent='⚡ Lanzar agente';
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  // API key
+  if(API_KEY){
+    document.getElementById('apikey-input').value=API_KEY;
+    document.getElementById('apikey-banner').style.background='rgba(29,185,84,.06)';
+    document.getElementById('apikey-banner').style.borderColor='rgba(29,185,84,.3)';
+  }
+  document.getElementById('save-key-btn').addEventListener('click', saveKey);
+  document.getElementById('launch-btn').addEventListener('click', launch);
+  document.getElementById('modal-close-btn').addEventListener('click', closeEmailModal);
+  document.getElementById('modal-cancel-btn').addEventListener('click', closeEmailModal);
+  document
