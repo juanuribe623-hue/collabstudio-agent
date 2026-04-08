@@ -217,7 +217,7 @@ select,input,textarea,button{font-family:'DM Sans',sans-serif}
         <a id="linkedin-link" href="#" target="_blank" class="btn btn-ghost btn-sm">Ver perfil →</a>
       </div>
       <div class="f-lbl">Para (email corporativo)</div>
-      <input type="email" class="m-input" id="modal-to" placeholder="contacto@empresa.com"/>
+      <input type="email" class="m-input" id="modal-to" placeholder="contacto[at]empresa.com"/>
       <div class="f-lbl">Asunto</div>
       <input type="text" class="m-input" id="modal-subject"/>
       <div class="f-lbl">Cuerpo</div>
@@ -405,7 +405,7 @@ async function runAgent(){
       setProgress(base+11,'Redactando email para '+co.name+'...');
       addLog('info','Email para '+co.name);
       var email = await callWithRetry(
-        'Write cold email in Spanish from Ana María Pardo (CollabStudio, Colombian influencer agency) to '+(qual.contact&&qual.contact.name||'Marketing Director')+' at '+co.name+'.\nContext: brands='+(co.brands||[]).join(',')+'| recent:'+qual.recentActivity+'| hook:'+qual.hook+'\nRules: max 90 words, NO generic phrases, subject references '+co.name+' specifically, open with concrete insight, propose 20min call, peer tone.\nSignature: Ana María Pardo | CollabStudio | info [at] collabstudioas.com\nJSON only:{"subject":"","preview":"","body":""}',
+        'Write cold email in Spanish from Ana María Pardo (CollabStudio, Colombian influencer agency) to '+(qual.contact&&qual.contact.name||'Marketing Director')+' at '+co.name+'.\nContext: brands='+(co.brands||[]).join(',')+'| recent:'+qual.recentActivity+'| hook:'+qual.hook+'\nRules: max 90 words, NO generic phrases, subject references '+co.name+' specifically, open with concrete insight, propose 20min call, peer tone.\nSignature: Ana María Pardo | CollabStudio | info[at]collabstudioas.com\nJSON only:{"subject":"","preview":"","body":""}',
         'email '+co.name
       );
 
