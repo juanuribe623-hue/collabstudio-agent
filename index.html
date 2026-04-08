@@ -3,122 +3,20 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>CollabStudio · AI Prospecting Agent</title>
+<title>CollabStudio - AI Prospecting Agent</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#06090f;--card:#0c1118;--line:#1a2530;--line2:#1e2e3a;
-  --gold:#c9993a;--goldL:#e8bb6a;--goldDim:rgba(201,153,58,.1);
-  --text:#cdd9e5;--muted:#6a8090;--faint:#2a3a46;
-  --green:#1db954;--amber:#f0a030;--red:#e05050;--blue:#4da6d0;--teal:#2ac3a2;
-}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh}
-a{color:var(--blue);text-decoration:none}
-a:hover{text-decoration:underline}
-select,input,textarea,button{font-family:'DM Sans',sans-serif}
-::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--line2);border-radius:3px}
-.header{background:var(--card);border-bottom:1px solid var(--line);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;position:sticky;top:0;z-index:100}
-.logo-c{font-family:'Bebas Neue',cursive;font-size:28px;color:var(--gold);letter-spacing:.1em}
-.logo-w{font-family:'Bebas Neue',cursive;font-size:28px;color:var(--text);letter-spacing:.1em}
-.logo-sub{font-size:10px;color:var(--muted);letter-spacing:.14em;margin-top:-4px}
-.stats{display:flex;gap:10px;flex-wrap:wrap}
-.stat{background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:8px 18px;text-align:center;min-width:72px}
-.stat-val{font-size:22px;font-weight:700}
-.stat-lbl{font-size:10px;color:var(--muted);margin-top:1px}
-.main{max-width:960px;margin:0 auto;padding:28px}
-.panel{background:var(--card);border:1px solid var(--line2);border-radius:16px;padding:24px;margin-bottom:22px}
-.panel-title{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:18px}
-.config-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
-.field label{display:block;font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
-.field select{width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:8px;color:var(--text);padding:9px 12px;font-size:13px;cursor:pointer;outline:none}
-.config-footer{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.from-lbl{font-size:12px;color:var(--muted)}
-.from-lbl span{color:var(--teal);font-weight:600}
-.btn{border:none;border-radius:8px;padding:9px 20px;font-weight:700;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:opacity .2s}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.btn-gold{background:linear-gradient(135deg,var(--gold),var(--goldL));color:#06090f}
-.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--line2)}
-.btn-green{background:rgba(29,185,84,.15);color:var(--green);border:1px solid rgba(29,185,84,.3)}
-.btn-red{background:rgba(224,80,80,.15);color:var(--red);border:1px solid rgba(224,80,80,.3)}
-.btn-teal{background:rgba(42,195,162,.15);color:var(--teal);border:1px solid rgba(42,195,162,.3)}
-.btn-sm{padding:5px 12px;font-size:12px}
-.progress-wrap{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin-bottom:20px}
-.progress-head{display:flex;justify-content:space-between;margin-bottom:10px}
-.progress-msg{font-size:13px;font-weight:600}
-.progress-pct{font-size:12px;color:var(--gold);font-family:monospace}
-.progress-track{background:var(--bg);border-radius:4px;height:4px;overflow:hidden}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--goldL));border-radius:4px;transition:width .5s ease}
-.alert{border-radius:10px;padding:12px 18px;margin-bottom:18px;font-size:13px}
-.alert-err{background:rgba(224,80,80,.1);border:1px solid rgba(224,80,80,.4);color:var(--red)}
-.alert-ok{background:rgba(29,185,84,.1);border:1px solid rgba(29,185,84,.4);color:var(--green)}
-.log-wrap{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:20px;max-height:180px;overflow-y:auto}
-.log-title{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px}
-.log-row{display:flex;gap:10px;font-size:12px;margin-bottom:4px}
-.log-ts{color:var(--faint);font-family:monospace;flex-shrink:0}
-.log-ok{color:var(--green)}.log-err{color:var(--red)}.log-info{color:var(--muted)}
-.tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
-.tab{background:transparent;border:1px solid var(--line);border-radius:20px;padding:5px 16px;font-size:12px;color:var(--muted);font-weight:600;cursor:pointer;transition:all .2s}
-.tab.active{background:rgba(201,153,58,.15);color:var(--gold);border-color:rgba(201,153,58,.4)}
-.pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
-.lead-card{border-radius:14px;margin-bottom:16px;overflow:hidden;border:1px solid var(--line);transition:border-color .3s}
-.lead-card.approved{border-color:rgba(29,185,84,.4)}
-.lead-card.rejected{border-color:rgba(224,80,80,.2);opacity:.4}
-.lead-card.error-card{border-color:rgba(224,80,80,.4)}
-.lead-head{background:var(--card);padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;flex-wrap:wrap}
-.lead-icon{width:44px;height:44px;border-radius:11px;background:var(--goldDim);border:1px solid rgba(201,153,58,.3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
-.lead-name{font-family:'Bebas Neue',cursive;font-size:18px;letter-spacing:.05em;line-height:1}
-.lead-sub{color:var(--muted);font-size:12px;margin-top:3px}
-.lead-badges{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto}
-.lead-body{background:var(--card);border-top:1px solid var(--line);padding:16px 20px;display:none}
-.lead-body.open{display:block}
-.hook-box{background:var(--goldDim);border:1px solid rgba(201,153,58,.25);border-radius:10px;padding:12px 16px;margin-bottom:16px}
-.hook-lbl{font-size:10px;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
-.hook-txt{color:var(--text);font-size:13px;line-height:1.6}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-.col-lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
-.reason{font-size:13px;color:var(--text);margin-bottom:5px;display:flex;gap:8px}
-.contact-box{background:var(--bg);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-.contact-name{color:var(--goldL);font-weight:700;font-size:15px}
-.action-row{display:flex;gap:10px;flex-wrap:wrap}
-.empty{text-align:center;padding:80px 20px;border:1px dashed var(--line2);border-radius:16px}
-.empty-icon{font-size:52px;margin-bottom:16px}
-.empty-title{font-family:'Bebas Neue',cursive;font-size:28px;color:var(--gold);letter-spacing:.06em}
-.empty-sub{color:var(--muted);font-size:14px;margin-top:8px;max-width:420px;margin-left:auto;margin-right:auto;line-height:1.6}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:999;padding:24px;backdrop-filter:blur(6px)}
-.modal-overlay.open{display:flex}
-.modal{background:var(--card);border:1px solid var(--line2);border-radius:18px;width:100%;max-width:660px;max-height:92vh;overflow-y:auto;box-shadow:0 0 80px rgba(201,153,58,.1)}
-.modal-hd{padding:20px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:flex-start}
-.modal-title{font-family:'Bebas Neue',cursive;font-size:22px;color:var(--gold);letter-spacing:.07em}
-.modal-sub{color:var(--muted);font-size:12px;margin-top:2px}
-.modal-x{background:none;border:none;color:var(--muted);font-size:26px;line-height:1;padding:0;cursor:pointer}
-.modal-bd{padding:24px}
-.f-lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
-.m-input{width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:8px;color:var(--text);padding:9px 12px;font-size:13px;margin-bottom:14px;outline:none}
-.m-textarea{width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:8px;color:var(--text);padding:10px 12px;font-size:13px;line-height:1.7;resize:vertical;margin-bottom:18px;outline:none}
-.modal-foot{font-size:11px;color:var(--muted);margin-top:12px}
-.linkedin-row{background:rgba(77,166,208,.08);border:1px solid rgba(77,166,208,.25);border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.linkedin-lbl{font-size:10px;color:var(--blue);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
-.apikey-banner{background:rgba(42,195,162,.08);border:1px solid rgba(42,195,162,.3);border-radius:12px;padding:16px 20px;margin-bottom:22px}
-.apikey-banner h3{color:var(--teal);font-size:14px;font-weight:700;margin-bottom:8px}
-.apikey-banner p{color:var(--muted);font-size:13px;line-height:1.6;margin-bottom:12px}
-.apikey-row{display:flex;gap:10px;align-items:center}
-.apikey-input{flex:1;background:var(--bg);border:1px solid var(--line2);border-radius:8px;color:var(--text);padding:9px 12px;font-size:13px;font-family:monospace;outline:none}
-@media(max-width:640px){.config-grid{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}.header{padding:14px 16px}.main{padding:16px}}
-</style>
+<link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 
 <div class="header">
   <div>
     <div><span class="logo-c">COLLAB</span><span class="logo-w">STUDIO</span></div>
-    <div class="logo-sub">AI PROSPECTING AGENT · GMAIL INTEGRATION</div>
+    <div class="logo-sub">AI PROSPECTING AGENT</div>
   </div>
   <div class="stats">
     <div class="stat"><div class="stat-val" id="s-total" style="color:var(--text)">0</div><div class="stat-lbl">Total</div></div>
-    <div class="stat"><div class="stat-val" id="s-hot" style="color:var(--green)">0</div><div class="stat-lbl">🔥 Hot</div></div>
+    <div class="stat"><div class="stat-val" id="s-hot" style="color:var(--green)">0</div><div class="stat-lbl">Hot</div></div>
     <div class="stat"><div class="stat-val" id="s-pending" style="color:var(--amber)">0</div><div class="stat-lbl">Revisar</div></div>
     <div class="stat"><div class="stat-val" id="s-sent" style="color:var(--teal)">0</div><div class="stat-lbl">Enviados</div></div>
     <div class="stat"><div class="stat-val" id="s-approved" style="color:var(--gold)">0</div><div class="stat-lbl">Aprobados</div></div>
@@ -126,31 +24,30 @@ select,input,textarea,button{font-family:'DM Sans',sans-serif}
 </div>
 
 <div class="main">
-
   <div class="apikey-banner" id="apikey-banner">
-    <h3>🔑 Configura tu API Key de Anthropic</h3>
-    <p>El agente necesita tu API key para funcionar. Se guarda solo en tu browser, nunca sale de tu computador.<br>Consíguela en <a href="https://console.anthropic.com/keys" target="_blank">console.anthropic.com/keys</a></p>
+    <h3>Configura tu API Key de Anthropic</h3>
+    <p>Se guarda solo en tu browser. Consiguela en <strong>console.anthropic.com/keys</strong></p>
     <div class="apikey-row">
       <input type="password" class="apikey-input" id="apikey-input" placeholder="sk-ant-api03-..."/>
       <button class="btn btn-teal" id="save-key-btn">Guardar</button>
-      <span id="key-saved" style="display:none;font-size:12px;color:var(--green)">✓ Guardada</span>
+      <span id="key-saved" style="display:none;font-size:12px;color:var(--green)">Guardada</span>
     </div>
   </div>
 
   <div class="panel">
-    <div class="panel-title">⚡ Configurar misión de prospección</div>
+    <div class="panel-title">Configurar mision de prospeccion</div>
     <div class="config-grid">
       <div class="field"><label>Industria</label>
         <select id="sel-industry">
-          <option>CPG / FMCG</option><option>Alimentos &amp; Bebidas</option>
-          <option>Cuidado Personal &amp; Belleza</option><option>Tecnología de Consumo</option>
-          <option>Moda &amp; Retail</option><option>Pharma &amp; Salud</option><option>Automotriz</option>
+          <option>CPG / FMCG</option><option>Alimentos y Bebidas</option>
+          <option>Cuidado Personal y Belleza</option><option>Tecnologia de Consumo</option>
+          <option>Moda y Retail</option><option>Pharma y Salud</option><option>Automotriz</option>
         </select>
       </div>
       <div class="field"><label>Mercado objetivo</label>
         <select id="sel-region">
-          <option>Colombia</option><option>México</option><option>Argentina</option>
-          <option>Chile</option><option>Perú</option><option>LATAM Global</option>
+          <option>Colombia</option><option>Mexico</option><option>Argentina</option>
+          <option>Chile</option><option>Peru</option><option>LATAM Global</option>
         </select>
       </div>
       <div class="field"><label>Presupuesto objetivo</label>
@@ -160,13 +57,13 @@ select,input,textarea,button{font-family:'DM Sans',sans-serif}
       </div>
     </div>
     <div class="config-footer">
-      <button class="btn btn-gold" id="launch-btn">⚡ Lanzar agente</button>
-      <div class="from-lbl">Enviando desde <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5831363e37183b373434393a2b2c2d3c3137392b763b3735">[email&#160;protected]</a></span></div>
+      <button class="btn btn-gold" id="launch-btn">Lanzar agente</button>
+      <div class="from-lbl">Enviando desde <span>info[at]collabstudioas.com</span></div>
     </div>
   </div>
 
   <div id="alert-err" class="alert alert-err" style="display:none"></div>
-  <div id="alert-ok"  class="alert alert-ok"  style="display:none"></div>
+  <div id="alert-ok" class="alert alert-ok" style="display:none"></div>
 
   <div class="progress-wrap" id="progress-wrap" style="display:none">
     <div class="progress-head">
@@ -177,15 +74,15 @@ select,input,textarea,button{font-family:'DM Sans',sans-serif}
   </div>
 
   <div class="log-wrap" id="log-wrap" style="display:none">
-    <div class="log-title">🪵 Log de actividad</div>
+    <div class="log-title">Log de actividad</div>
     <div id="log-rows"></div>
   </div>
 
   <div class="tabs" id="tabs-wrap" style="display:none">
     <button class="tab active" data-tab="all">Todos (<span id="tc-all">0</span>)</button>
-    <button class="tab" data-tab="hot">🔥 Hot (<span id="tc-hot">0</span>)</button>
+    <button class="tab" data-tab="hot">Hot (<span id="tc-hot">0</span>)</button>
     <button class="tab" data-tab="ready">Por revisar (<span id="tc-ready">0</span>)</button>
-    <button class="tab" data-tab="sent">✉️ Enviados (<span id="tc-sent">0</span>)</button>
+    <button class="tab" data-tab="sent">Enviados (<span id="tc-sent">0</span>)</button>
     <button class="tab" data-tab="approved">Aprobados (<span id="tc-approved">0</span>)</button>
     <button class="tab" data-tab="rejected">Descartados</button>
   </div>
@@ -193,9 +90,9 @@ select,input,textarea,button{font-family:'DM Sans',sans-serif}
   <div id="leads-wrap"></div>
 
   <div class="empty" id="empty-state">
-    <div class="empty-icon">🤖</div>
+    <div class="empty-icon">Robot</div>
     <div class="empty-title">Agente listo para prospectar</div>
-    <div class="empty-sub">Guarda tu API key, configura industria y mercado, y lanza el agente. Busca empresas, califica el fit, encuentra el contacto y redacta el email — tú apruebas y envías.</div>
+    <div class="empty-sub">Guarda tu API key, configura industria y mercado, y lanza el agente.</div>
   </div>
 </div>
 
@@ -203,19 +100,12 @@ select,input,textarea,button{font-family:'DM Sans',sans-serif}
   <div class="modal">
     <div class="modal-hd">
       <div>
-        <div class="modal-title">Revisar &amp; Enviar Email</div>
-        <div class="modal-sub" id="modal-sub">Para: —</div>
+        <div class="modal-title">Revisar y Enviar Email</div>
+        <div class="modal-sub" id="modal-sub">Para: -</div>
       </div>
-      <button class="modal-x" id="modal-close-btn">×</button>
+      <button class="modal-x" id="modal-close-btn">x</button>
     </div>
     <div class="modal-bd">
-      <div id="linkedin-row" class="linkedin-row" style="display:none">
-        <div>
-          <div class="linkedin-lbl">💼 LinkedIn del contacto</div>
-          <div id="linkedin-info" style="font-size:13px;color:var(--text)"></div>
-        </div>
-        <a id="linkedin-link" href="#" target="_blank" class="btn btn-ghost btn-sm">Ver perfil →</a>
-      </div>
       <div class="f-lbl">Para (email corporativo)</div>
       <input type="email" class="m-input" id="modal-to" placeholder="contacto[at]empresa.com"/>
       <div class="f-lbl">Asunto</div>
@@ -223,14 +113,13 @@ select,input,textarea,button{font-family:'DM Sans',sans-serif}
       <div class="f-lbl">Cuerpo</div>
       <textarea class="m-textarea" id="modal-body" rows="11"></textarea>
       <div style="display:flex;gap:10px">
-        <button class="btn btn-gold" id="send-btn">📤 Enviar por Gmail</button>
+        <button class="btn btn-gold" id="send-btn">Enviar por Gmail</button>
         <button class="btn btn-ghost" id="modal-cancel-btn">Cancelar</button>
       </div>
-      <div class="modal-foot">✉️ Se enviará desde <strong style="color:var(--teal)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f59c9b939ab5969a99999497868180919c9a9486db969a98">[email&#160;protected]</a></strong> vía Gmail</div>
     </div>
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
